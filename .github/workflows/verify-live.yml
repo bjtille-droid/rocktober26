@@ -1,0 +1,20 @@
+name: Verify published Rocktober
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-live.yml']
+permissions:
+  contents: read
+jobs:
+  published-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Check the public website and shared backend
+        run: node scripts/smoke-live.mjs
+        env:
+          LIVE_SITE: https://rocktober-dun.vercel.app
