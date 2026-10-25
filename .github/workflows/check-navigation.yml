@@ -8,6 +8,7 @@ on:
       - 'scripts/check-navigation.mjs'
       - 'public/index.html'
       - 'public/styles.css'
+      - 'server.mjs'
 permissions:
   contents: read
 jobs:

@@ -6,7 +6,7 @@ import { randomBytes } from 'node:crypto';
 import handler, { createApi } from './api/index.js';
 import { MemoryStore } from './lib/store.js';
 
-const root = fileURLToPath(new URL('./public/', import.meta.url));
+const root = path.resolve(fileURLToPath(new URL('./public/', import.meta.url)));
 const port = Number(process.env.PORT) || 3000;
 const useMemory = process.env.DEVELOPMENT_STORE === 'memory' && process.env.NODE_ENV !== 'production';
 const api = useMemory ? createApi({store: new MemoryStore(), env: {...process.env, NODE_ENV: 'development', SESSION_SECRET: process.env.SESSION_SECRET || randomBytes(32).toString('hex')}}) : handler;

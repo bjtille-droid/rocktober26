@@ -62,7 +62,8 @@ try {
       body: '<!doctype html><title>Instagram navigation intercepted</title>'
     }));
     const page = await context.newPage();
-    await page.goto(origin, { waitUntil: 'networkidle' });
+    const homepage = await page.goto(origin, { waitUntil: 'networkidle' });
+    assert.equal(homepage.status(), 200, 'Local homepage must return HTTP 200');
 
     const links = await page.locator('.masthead a[href^="#"]').evaluateAll(nodes =>
       nodes.map(node => ({ href: node.getAttribute('href'), text: node.innerText.trim() }))
@@ -89,8 +90,8 @@ try {
 
     for (let index = 0; index < 2; index++) {
       const link = instagram.nth(index);
-      assert.equal((await link.textContent()).trim(), 'Instagram');
-      assert.equal((await link.innerText()).trim().toLowerCase(), 'instagram');
+      assert.equal((await link.textContent()).trim(), 'Instagram', 'Instagram source label must be exactly Instagram');
+      assert.equal((await link.innerText()).trim().toLowerCase(), 'instagram', 'Instagram rendered label must contain only Instagram');
       assert.equal(await link.getAttribute('href'), destination);
       await checkHitTarget(link, `${viewport.label}: Instagram link ${index + 1}`);
       const popupPromise = context.waitForEvent('page', { timeout: 5000 });
