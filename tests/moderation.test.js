@@ -10,7 +10,7 @@ test('normal names and costume descriptions survive moderation', () => {
 });
 
 test('profanity is rejected on the server including common evasions', () => {
-  for (const text of ['fuck', 'f.u.c.k', 'f u c k', 'fuuuuuck', 'sh1t', 'fuсk', 'ＦＵＣＫ']) {
+  for (const text of ['fuck', 'f.u.c.k', 'f u c k', 'fuuuuuck', 'sh1t', 's.h.1.t', 'f**k', 'f*ck', 'fuсk', 'ＦＵＣＫ']) {
     assert.throws(() => validatePublicText(text, { label: 'Costume' }),
       error => error instanceof ValidationError && error.code === 'profanity', text);
   }
