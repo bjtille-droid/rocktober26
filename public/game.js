@@ -258,7 +258,7 @@ function resume() {
   lastTime = 0;
   accumulator = 0;
   pendingDirection = 0;
-  startButton.textContent = 'Restart run';
+  startButton.textContent = 'Pause run';
   status.textContent = 'Back into the graveyard. P or Escape pauses.';
   canvas.focus({ preventScroll: true });
   frameId = requestAnimationFrame(time => frame(time, generation));
@@ -277,6 +277,7 @@ function pause() {
 }
 
 async function begin() {
+  if (mode === 'playing') { pause(); return; }
   if (mode === 'paused') { resume(); return; }
   if (mode === 'starting' || submitInFlight) return;
   stopLoop();
@@ -309,7 +310,7 @@ async function begin() {
   game = createGame(seed);
   mode = 'playing';
   startButton.disabled = false;
-  startButton.textContent = 'Restart run';
+  startButton.textContent = 'Pause run';
   status.textContent = run ? 'Leaderboard run. ← / → or A / D to move. P pauses.' :
     'Practice mode. Shared scoring is unavailable; this run stays on your device.';
   scoreStatus.textContent = unavailableMessage ? `${unavailableMessage} You can still practice.` : '';

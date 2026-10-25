@@ -22,8 +22,9 @@ const randomButton = $('randomCostume');
 const status = $('costumeStatus');
 let connected = false;
 let busy = false;
-let loading = false;
+let refreshPending = null;
 let mine = null;
+let lastCostumeRender = null;
 
 function setStatus(message, error=false) {status.textContent=message;status.classList.toggle('error',error);}
 function updateControls() {
@@ -52,7 +53,10 @@ async function api(path, options={}) {
   } finally {clearTimeout(timeout);}
 }
 function renderCostumes(entries) {
-  const list=$('rollList');list.replaceChildren();
+  const signature=JSON.stringify(entries.map(({id,name,costume,mine})=>({id,name,costume,mine})));
+  if(signature===lastCostumeRender&&!status.dataset.networkError){updateControls();return;}
+  lastCostumeRender=signature;
+  const list=$('rollList');const scrollTop=list.scrollTop;list.replaceChildren();
   mine=entries.find(entry=>entry.mine)||null;
   $('entryCount').textContent=`${entries.length} ${entries.length===1?'costume':'costumes'}`;
   if(!entries.length) {
@@ -67,6 +71,7 @@ function renderCostumes(entries) {
     if(entry.mine){const stamp=document.createElement('span');stamp.className='mine-stamp';stamp.textContent='YOU';row.append(stamp);}
     list.append(row);
   });
+  list.scrollTop=scrollTop;
   if(mine&&!nameInput.value&&!costumeInput.value){nameInput.value=mine.name;costumeInput.value=mine.costume;}
   updateControls();
 }
@@ -81,9 +86,11 @@ function renderLeaderboard(entries) {
     body.append(row);
   });
 }
-async function refresh() {
-  if(loading)return;
-  loading=true;
+function refresh(afterWrite=false) {
+  if(refreshPending) {
+    return afterWrite===true ? refreshPending.then(()=>refresh()) : refreshPending;
+  }
+  refreshPending=(async()=>{
   try {
     const data=await api('/api/community');
     connected=true;connection('Shared · live',true);
@@ -94,7 +101,9 @@ async function refresh() {
     setStatus(error.message,true);status.dataset.networkError='true';
     if(!$('rollList').querySelector('.roll-entry'))$('rollList').querySelector('p').textContent='The guest book is temporarily unavailable. Please check back.';
     updateControls();
-  } finally {loading=false;}
+  } finally {refreshPending=null;}
+  })();
+  return refreshPending;
 }
 form.addEventListener('submit',async event=>{
   event.preventDefault();if(busy||!connected)return;
@@ -104,7 +113,7 @@ form.addEventListener('submit',async event=>{
   try {
     await api('/api/costumes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,costume})});
     setStatus('You’re in the guest book. The crypt approves.');
-    await refresh();
+    await refresh(true);
   }catch(error){setStatus(error.message,true);}finally{busy=false;updateControls();}
 });
 deleteButton.addEventListener('click',async()=>{
@@ -112,13 +121,13 @@ deleteButton.addEventListener('click',async()=>{
   busy=true;updateControls();
   try {
     await api('/api/costumes',{method:'DELETE',headers:{'Content-Type':'application/json'},body:'{}'});
-    mine=null;nameInput.value='';costumeInput.value='';setStatus('Your entry has left the crypt.');await refresh();
+    mine=null;nameInput.value='';costumeInput.value='';setStatus('Your entry has left the crypt.');await refresh(true);
   }catch(error){setStatus(error.message,true);}finally{busy=false;updateControls();}
 });
 const ideas=['Mothman','A haunted Clemson tiger','Vampire rock star','Ghost with a day job','Swamp creature','Cursed fortune teller','Disco skeleton','Werewolf in a cardigan','The world’s tiniest gargoyle','Possessed marching band'];
 randomButton.addEventListener('click',()=>{costumeInput.value=ideas[Math.floor(Math.random()*ideas.length)];costumeInput.focus();});
 $('refreshCommunity').addEventListener('click',refresh);
-window.addEventListener('rocktober:refresh',refresh);
+window.addEventListener('rocktober:refresh',()=>refresh(true));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 setInterval(()=>{if(!document.hidden&&!busy)refresh();},20000);
 window.rocktoberSessionReady = refresh();

@@ -2,11 +2,11 @@
 
 A Sloan Street Afterlife Production: Halloween, October 31, 2026 at 8 PM Eastern.
 
-The site keeps its printed campus-flyer look, haunted illustrations, live countdown, Swell / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade.
+The site keeps its printed campus-flyer look, haunted illustrations, live countdown, Swell / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade. Guests can save the event with the calendar download; its start time is stored in UTC so calendar apps display the correct local time.
 
 ## Shared features
 
-- Rock Run is an endless three-lane arcade with rock combos, survival points, increasing difficulty, three lives, and a ten-minute cap. Players may bank a score early.
+- Rock Run is an endless three-lane arcade with rock combos, survival points, increasing difficulty, three lives, and a ten-minute cap. Players may pause/resume with the main button on phones or with P/Escape, and bank a score early.
 - The server issues a seeded run and replays every submitted move. It calculates the score itself, checks elapsed time and ownership, and consumes each run once. This prevents arbitrary score submissions; it does not prove that a player is human or prevent every form of automation.
 - Each browser keeps one best score and one costume entry. Costume entries and the top ten scores are visible to every visitor. The page refreshes shared data every twenty seconds and after a submission.
 - A signed HttpOnly cookie identifies the entry owner. Only that owner can update or delete the entry. The delete API accepts no entry ID, so a visitor cannot choose someone else's entry to remove. Clearing cookies or switching devices loses access to the old entry.
@@ -49,6 +49,6 @@ No analytics, camera access, AI portrait generation, or third-party browser scri
 
 The host can moderate entries directly in the dedicated Supabase project's table editor. Tables are prefixed `rocktober_`. Expired run/rate records are periodically cleaned during rate-limit calls. No guest receives database administration access.
 
-The event time is set in `public/community.js`; its label is in `public/index.html`. Game changes must update `RULES_VERSION` in `public/game-core.js` to keep old replays from being accepted under new rules.
+The event time is set in `public/community.js`; its label is in `public/index.html` and its calendar download is `public/rocktober.ics`. Update all three together if the date changes. Game rule changes must update `RULES_VERSION` in `public/game-core.js` to keep old replays from being accepted under new rules.
 
 Third-party notices and exact source provenance are in `vendor/obscenity/LICENSE.md` and `vendor/obscenity/PROVENANCE.md`.

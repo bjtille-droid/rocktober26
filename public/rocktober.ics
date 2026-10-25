@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sloan Street//Rocktober 2026//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:rocktober-20261031@sloan-street
+DTSTAMP:20261025T000000Z
+DTSTART:20261101T000000Z
+SUMMARY:Rocktober
+LOCATION:Sloan Street Apartments\, Clemson University
+DESCRIPTION:Halloween night at 8 PM Eastern. Bring a rock or get your head 
+ shaved.\nSwell plays first\, then Karaoke + Spooky Games\, then DJ Campbel
+ l.
+URL:https://rocktober-dun.vercel.app
+END:VEVENT
+END:VCALENDAR

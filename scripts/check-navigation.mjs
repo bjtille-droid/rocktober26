@@ -102,6 +102,19 @@ try {
       await popup.close();
     }
 
+    const calendar = page.locator('a.calendar-link');
+    assert.equal(await calendar.getAttribute('href'), '/rocktober.ics');
+    assert.equal(await calendar.getAttribute('download'), 'rocktober.ics');
+    const downloading = page.waitForEvent('download');
+    await calendar.click();
+    const download = await downloading;
+    assert.equal(download.suggestedFilename(), 'rocktober.ics');
+    const stream = await download.createReadStream();
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    const calendarText = Buffer.concat(chunks).toString('utf8');
+    assert.ok(calendarText.includes('DTSTART:20261101T000000Z'), 'Calendar must start at Halloween 8 PM Eastern');
+
     const dimensions = await page.evaluate(() => ({
       viewport: innerWidth, width: document.documentElement.scrollWidth
     }));
@@ -109,7 +122,7 @@ try {
       `${viewport.label} has horizontal overflow: ${JSON.stringify(dimensions)}`);
     console.log(JSON.stringify({ viewport: viewport.label, verified: true,
       checks: ['header hit targets', 'all section-link clicks', 'both Instagram popups',
-        'Instagram-only labels', 'no visible username', 'no horizontal overflow'] }));
+        'Instagram-only labels', 'no visible username', 'calendar download and date', 'no horizontal overflow'] }));
     await context.close();
   }
 } finally {

@@ -10,7 +10,7 @@ const root = path.resolve(fileURLToPath(new URL('./public/', import.meta.url)));
 const port = Number(process.env.PORT) || 3000;
 const useMemory = process.env.DEVELOPMENT_STORE === 'memory' && process.env.NODE_ENV !== 'production';
 const api = useMemory ? createApi({store: new MemoryStore(), env: {...process.env, NODE_ENV: 'development', SESSION_SECRET: process.env.SESSION_SECRET || randomBytes(32).toString('hex')}}) : handler;
-const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
+const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon','.ics':'text/calendar; charset=utf-8'};
 http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost');

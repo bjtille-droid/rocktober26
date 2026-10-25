@@ -6,8 +6,12 @@ on:
     paths:
       - '.github/workflows/check-navigation.yml'
       - 'scripts/check-navigation.mjs'
+      - 'scripts/check-guest-journey.mjs'
       - 'public/index.html'
       - 'public/styles.css'
+      - 'public/community.js'
+      - 'public/game.js'
+      - 'public/rocktober.ics'
       - 'server.mjs'
 permissions:
   contents: read
@@ -25,3 +29,9 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
       - name: Click navigation on desktop and mobile Chrome
         run: node scripts/check-navigation.mjs
+      - name: Exercise the local two-visitor guest journey
+        run: node scripts/check-guest-journey.mjs
+      - name: Inspect the public website without writes
+        run: node scripts/check-guest-journey.mjs --live
+        env:
+          LIVE_SITE: https://rocktober-dun.vercel.app
