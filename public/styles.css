@@ -18,3 +18,5 @@ h1{position:relative;z-index:1;margin:0;font-family:Impact,Haettenschweiler,"Ari
 /* Small-screen controls keep the printed flyer easy to use. */
 .masthead nav a{display:inline-flex;align-items:center;min-height:32px}.flyer-footer>a{display:inline-flex;align-items:center;min-height:32px}.calendar-link{display:inline-flex;align-items:center;min-height:32px;margin-top:5px;color:var(--green);font-size:.65rem;font-weight:900;text-underline-offset:4px}.calendar-link:hover{color:var(--paper)}.text-button{min-height:32px}.delete-own{min-height:44px}
 @media(max-width:590px){.roll-form input,.score-input-row input{font-size:16px}}
+
+.instagram-link{gap:7px}.instagram-icon{display:block;flex-shrink:0;width:24px;height:24px}.masthead nav .instagram-link{color:var(--red)}.calendar-actions{display:flex;align-items:center;flex-wrap:wrap;gap:0 16px}.calendar-download{display:inline-flex;align-items:center;min-height:32px;margin-top:5px;color:#c8bdac;font-size:.61rem;text-underline-offset:4px}.calendar-download:hover{color:var(--paper)}

@@ -61,6 +61,10 @@ try {
       status: 200, contentType: 'text/html',
       body: '<!doctype html><title>Instagram navigation intercepted</title>'
     }));
+    await context.route('https://calendar.google.com/**', route => route.fulfill({
+      status: 200, contentType: 'text/html',
+      body: '<!doctype html><title>Google Calendar navigation intercepted</title>'
+    }));
     const page = await context.newPage();
     const homepage = await page.goto(origin, { waitUntil: 'networkidle' });
     assert.equal(homepage.status(), 200, 'Local homepage must return HTTP 200');
@@ -84,6 +88,9 @@ try {
     const instagram = page.locator('a[href^="https://www.instagram.com/"]');
     assert.equal(await instagram.count(), 2, 'Header and footer Instagram links must exist');
     const destination = await instagram.first().getAttribute('href');
+    const instagramUrl = new URL(destination);
+    assert.equal(instagramUrl.origin, 'https://www.instagram.com');
+    assert.equal(instagramUrl.pathname.replace(/\/+$/, ''), '/rocktober_ss119_4', 'Instagram must use the updated account');
     const username = new URL(destination).pathname.replaceAll('/', '');
     const visibleText = await page.locator('body').innerText();
     assert.ok(!visibleText.toLowerCase().includes(username.toLowerCase()), 'Instagram username must not appear in visible copy');
@@ -93,6 +100,9 @@ try {
       assert.equal((await link.textContent()).trim(), 'Instagram', 'Instagram source label must be exactly Instagram');
       assert.equal((await link.innerText()).trim().toLowerCase(), 'instagram', 'Instagram rendered label must contain only Instagram');
       assert.equal(await link.getAttribute('href'), destination);
+      const logo = link.locator('img[src="/assets/instagram.svg"]');
+      assert.equal(await logo.count(), 1, 'Each Instagram link must include its logo');
+      assert.ok(await logo.evaluate(image => image.complete && image.naturalWidth > 0), 'Instagram logo must load');
       await checkHitTarget(link, `${viewport.label}: Instagram link ${index + 1}`);
       const popupPromise = context.waitForEvent('page', { timeout: 5000 });
       await link.click({ timeout: 5000 });
@@ -103,10 +113,30 @@ try {
     }
 
     const calendar = page.locator('a.calendar-link');
-    assert.equal(await calendar.getAttribute('href'), '/rocktober.ics');
-    assert.equal(await calendar.getAttribute('download'), 'rocktober.ics');
-    const downloading = page.waitForEvent('download');
+    const calendarUrl = new URL(await calendar.getAttribute('href'));
+    assert.equal(calendarUrl.origin, 'https://calendar.google.com');
+    assert.equal(calendarUrl.searchParams.get('action'), 'TEMPLATE');
+    assert.equal(calendarUrl.searchParams.get('text'), 'Rocktober');
+    assert.equal(calendarUrl.searchParams.get('dates').split('/')[0], '20261101T000000Z');
+    assert.equal(calendarUrl.searchParams.get('ctz'), 'America/New_York');
+    assert.ok(calendarUrl.searchParams.get('location').includes('Sloan Street Apartments'));
+    assert.ok(calendarUrl.searchParams.get('location').includes('Clemson'));
+    assert.ok(calendarUrl.searchParams.get('details').includes('Swell'));
+    assert.ok(calendarUrl.searchParams.get('details').includes('DJ Campbell'));
+    assert.equal(await calendar.getAttribute('download'), null);
+    await checkHitTarget(calendar, `${viewport.label}: Google Calendar`);
+    const calendarPopupPromise = context.waitForEvent('page', { timeout: 5000 });
     await calendar.click();
+    const calendarPopup = await calendarPopupPromise;
+    await calendarPopup.waitForURL(url => url.origin === calendarUrl.origin, { timeout: 5000 });
+    assert.equal(new URL(calendarPopup.url()).searchParams.get('dates'), calendarUrl.searchParams.get('dates'));
+    await calendarPopup.close();
+
+    const calendarDownload = page.locator('a.calendar-download');
+    assert.equal(await calendarDownload.getAttribute('href'), '/rocktober.ics');
+    assert.equal(await calendarDownload.getAttribute('download'), 'rocktober.ics');
+    const downloading = page.waitForEvent('download');
+    await calendarDownload.click();
     const download = await downloading;
     assert.equal(download.suggestedFilename(), 'rocktober.ics');
     const stream = await download.createReadStream();
@@ -122,7 +152,8 @@ try {
       `${viewport.label} has horizontal overflow: ${JSON.stringify(dimensions)}`);
     console.log(JSON.stringify({ viewport: viewport.label, verified: true,
       checks: ['header hit targets', 'all section-link clicks', 'both Instagram popups',
-        'Instagram-only labels', 'no visible username', 'calendar download and date', 'no horizontal overflow'] }));
+        'Instagram logos and updated account', 'Instagram-only labels', 'no visible username',
+        'prefilled Google Calendar popup', 'ICS download and date', 'no horizontal overflow'] }));
     await context.close();
   }
 } finally {

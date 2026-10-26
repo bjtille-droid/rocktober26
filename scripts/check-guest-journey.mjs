@@ -32,11 +32,15 @@ async function waitForPublishedCalendar() {
       const response = await fetch(`${origin}/rocktober.ics`, {
         cache: 'no-store', signal: AbortSignal.timeout(5000)
       });
-      if (response.ok && (await response.text()).includes('DTSTART:20261101T000000Z')) return;
+      if (response.ok && (await response.text()).includes('DTSTART:20261101T000000Z')) {
+        const homepage = await fetch(origin, { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+        const text = await homepage.text();
+        if (homepage.ok && text.includes('rocktober_ss119_4') && text.includes('calendar.google.com')) return;
+      }
     } catch {}
     await pause(2000);
   }
-  throw new Error('The final calendar deployment was not ready within 60 seconds');
+  throw new Error('The updated Instagram and Google Calendar deployment was not ready within 60 seconds');
 }
 
 async function localJourney() {
@@ -214,14 +218,34 @@ async function publicReadOnly() {
       await link.click();
       assert.equal(new URL(page.url()).hash, hash);
     }
-    assert.equal(await page.locator('.masthead a[href*="instagram.com"]').count(), 1);
+    const instagram = page.locator('a[href^="https://www.instagram.com/"]');
+    assert.equal(await instagram.count(), 2, 'Both public Instagram links must remain present');
+    for (const link of await instagram.all()) {
+      const url = new URL(await link.getAttribute('href'));
+      assert.equal(url.pathname.replace(/\/+$/, ''), '/rocktober_ss119_4');
+      assert.equal((await link.textContent()).trim(), 'Instagram');
+      const logo = link.locator('img[src="/assets/instagram.svg"]');
+      assert.equal(await logo.count(), 1);
+      assert.ok(await logo.evaluate(image => image.complete && image.naturalWidth > 0));
+    }
+    const visibleText = (await page.locator('body').innerText()).toLowerCase();
+    assert.ok(!visibleText.includes('rocktober_ss119_4'), 'The account handle must not appear in visible copy');
+    const google = new URL(await page.locator('a.calendar-link').getAttribute('href'));
+    assert.equal(google.origin, 'https://calendar.google.com');
+    assert.equal(google.searchParams.get('action'), 'TEMPLATE');
+    assert.equal(google.searchParams.get('text'), 'Rocktober');
+    assert.equal(google.searchParams.get('dates').split('/')[0], '20261101T000000Z');
+    assert.equal(google.searchParams.get('ctz'), 'America/New_York');
+    assert.equal(await page.locator('a.calendar-download').getAttribute('href'), '/rocktober.ics');
     const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: innerWidth }));
     assert.ok(dimensions.width <= dimensions.viewport + 1, 'Public page must fit its viewport');
     assert.deepEqual(blockedWrites, [], 'Read-only inspection must not attempt production writes');
     assert.deepEqual(failures, [], 'Public page must load all same-origin resources');
     assert.deepEqual(errors, [], 'Public page must have no console or runtime errors');
     console.log(JSON.stringify({ verified: true, environment: 'public-read-only', viewport: viewport.width,
-      checks: ['public access', 'shared backend status', 'all artwork loaded', 'calendar date', 'header clicks', 'viewport fit', 'no browser errors', 'no writes'] }));
+      checks: ['public access', 'shared backend status', 'all artwork and Instagram logos loaded',
+        'updated Instagram account', 'Google Calendar event details', 'ICS date', 'header clicks',
+        'viewport fit', 'no browser errors', 'no writes'] }));
     await context.close();
   }
 }

@@ -2,7 +2,7 @@
 
 A Sloan Street Afterlife Production: Halloween, October 31, 2026 at 8 PM Eastern.
 
-The site keeps its printed campus-flyer look, haunted illustrations, live countdown, Swell / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade. Guests can save the event with the calendar download; its start time is stored in UTC so calendar apps display the correct local time.
+The site keeps its printed campus-flyer look, haunted illustrations, live countdown, Swell / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade. Guests can open a prefilled Google Calendar event or download the event for other calendar apps. Both use the same 8 PM Eastern start. The Google link is a start-time reminder with no assumed party end time; guests choose Save in Google Calendar.
 
 ## Shared features
 
@@ -49,6 +49,6 @@ No analytics, camera access, AI portrait generation, or third-party browser scri
 
 The host can moderate entries directly in the dedicated Supabase project's table editor. Tables are prefixed `rocktober_`. Expired run/rate records are periodically cleaned during rate-limit calls. No guest receives database administration access.
 
-The event time is set in `public/community.js`; its label is in `public/index.html` and its calendar download is `public/rocktober.ics`. Update all three together if the date changes. Game rule changes must update `RULES_VERSION` in `public/game-core.js` to keep old replays from being accepted under new rules.
+The event time is set in `public/community.js`; its label is in `public/index.html` and its Google Calendar link is in `public/index.html`; the calendar download is `public/rocktober.ics`. Update the countdown, label, link, and download together if the date changes. Game rule changes must update `RULES_VERSION` in `public/game-core.js` to keep old replays from being accepted under new rules.
 
 Third-party notices and exact source provenance are in `vendor/obscenity/LICENSE.md` and `vendor/obscenity/PROVENANCE.md`.

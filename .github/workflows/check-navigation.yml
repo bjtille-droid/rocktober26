@@ -12,6 +12,7 @@ on:
       - 'public/community.js'
       - 'public/game.js'
       - 'public/rocktober.ics'
+      - 'public/assets/instagram.svg'
       - 'server.mjs'
 permissions:
   contents: read
