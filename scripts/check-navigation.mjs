@@ -32,6 +32,14 @@ async function waitForServer() {
 }
 
 async function checkHitTarget(locator, label) {
+  await locator.evaluate(element => {
+    let ancestor = element;
+    while (ancestor) {
+      if (getComputedStyle(ancestor).position === 'fixed') return;
+      ancestor = ancestor.parentElement;
+    }
+    element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
+  });
   await locator.scrollIntoViewIfNeeded();
   const hit = await locator.evaluate(link => {
     const rect = link.getBoundingClientRect();
