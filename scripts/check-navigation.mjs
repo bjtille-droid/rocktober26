@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
+import { appendFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 // Only a local, in-memory site is tested. No production guest or score data.
@@ -16,6 +17,7 @@ for (const stream of [server.stdout, server.stderr]) {
   stream.on('data', chunk => { serverOutput = (serverOutput + chunk).slice(-4000); });
 }
 let browser;
+let testStage = 'browser startup';
 
 async function waitForServer() {
   for (let attempt = 0; attempt < 50; attempt++) {
@@ -45,6 +47,7 @@ async function checkHitTarget(locator, label) {
 const routes = ['/', '/arcade', '/roll-call'];
 
 async function verifyPage(page, path, viewport) {
+  testStage = `${viewport.label}: page ${path}`;
   const header = page.locator('.masthead nav');
   const mobile = page.locator('.mobile-nav');
   assert.equal(await header.locator('a[href="/"],a[href="/arcade"],a[href="/roll-call"]').count(), 3);
@@ -95,6 +98,7 @@ async function verifyPage(page, path, viewport) {
 }
 
 async function verifyBats(page, viewport, standardMotion = false) {
+  testStage = `${viewport.label}: bat setup`;
   const trigger = page.locator('#batTrigger');
   const layer = page.locator('#batFlightLayer');
   const caption = page.locator('#batCaption');
@@ -112,16 +116,19 @@ async function verifyBats(page, viewport, standardMotion = false) {
   const before = await page.locator('.hero').boundingBox();
   const beforeHeight = await page.evaluate(() => document.documentElement.scrollHeight);
   const initialStatus = await status.textContent();
+  testStage = `${viewport.label}: bat pointer feedback`;
   await checkHitTarget(trigger, `${viewport.label}: wake the bats`);
   if (viewport.mobile) await trigger.tap(); else await trigger.click();
   await page.waitForFunction(initial => document.getElementById('batStatus').textContent.trim() &&
     document.getElementById('batStatus').textContent !== initial, initialStatus);
   assert.equal(await caption.textContent(), 'Spooked!');
   assert.ok(await trigger.evaluate(element => element.classList.contains('is-awake')));
+  testStage = `${viewport.label}: ${standardMotion ? 'animated' : 'reduced'} flight contract`;
   assert.equal(await layer.locator('.flying-bat').count(), standardMotion ? 6 : 0,
     standardMotion ? 'Normal motion must release six bats' : 'Reduced motion must skip flying bats');
   if (standardMotion) assert.ok(await layer.evaluate(element => element.getAnimations({ subtree: true }).length > 0), 'Released bats must animate');
   for (const key of ['Enter', 'Space']) {
+    testStage = `${viewport.label}: bat ${key} feedback`;
     const previous = await status.textContent();
     await trigger.focus();
     await trigger.press(key);
@@ -130,11 +137,14 @@ async function verifyBats(page, viewport, standardMotion = false) {
     assert.equal(await layer.locator('.flying-bat').count(), standardMotion ? 6 : 0, 'Repeated activation must not accumulate bats');
   }
   const after = await page.locator('.hero').boundingBox();
+  testStage = `${viewport.label}: bat layout preservation`;
   assert.ok(Math.abs(before.height - after.height) <= 1, 'Bat interaction must not add layout height');
   assert.equal(await page.evaluate(() => document.documentElement.scrollHeight), beforeHeight);
+  testStage = `${viewport.label}: bat cleanup`;
   await page.waitForFunction(() => document.querySelectorAll('#batFlightLayer .flying-bat').length === 0, null, { timeout: 2500 });
   await page.waitForFunction(() => document.getElementById('batCaption').textContent === 'Wake the bats', null, { timeout: 3500 });
   // Decorative layers must not obstruct real party controls or header links.
+  testStage = `${viewport.label}: links after bats`;
   await checkHitTarget(page.locator('.calendar-link'), `${viewport.label}: calendar after bats`);
   await checkHitTarget(page.locator('.masthead .instagram-link'), `${viewport.label}: Instagram after bats`);
 }
@@ -175,6 +185,7 @@ try {
     }
     await page.goto(origin, { waitUntil: 'networkidle' });
     await verifyBats(page, viewport);
+    testStage = `${viewport.label}: Instagram and calendars`;
     const instagram = page.locator('a[href^="https://www.instagram.com/"]');
     assert.equal(await instagram.count(), 2, 'Header and footer Instagram links must exist');
     const destination = await instagram.first().getAttribute('href');
@@ -253,11 +264,18 @@ try {
   const tabs = await motionPage.locator('.mobile-nav').boundingBox();
   await motionPage.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   const firstScreenWarning = await motionPage.locator('.rock-warning').boundingBox();
+  testStage = 'phone-standard-motion: first-screen rock rule';
   assert.ok(firstScreenWarning.y + firstScreenWarning.height <= tabs.y + 1, 'Animated bats must preserve the first-screen entry rule');
   console.log(JSON.stringify({ verified: true, viewport: 'phone-standard-motion',
     checks: ['touch, Enter, and Space', 'six bounded flights', 'repeat activation cap', 'animation cleanup',
       'status and caption feedback', 'no layout shift', 'unblocked links', 'first-screen rock rule'] }));
   await motionContext.close();
+} catch (error) {
+  const message = String(error?.message || 'Browser check failed')
+    .replace(/https?:\/\/\S+/g, '[URL]').replace(/[^\x20-\x7e]/g, ' ').replace(/\s+/g, ' ');
+  const diagnosis = `${testStage}: ${message}`.slice(0, 250);
+  if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `diag=${diagnosis}\n`);
+  throw error;
 } finally {
   await browser?.close();
   server.kill('SIGTERM');

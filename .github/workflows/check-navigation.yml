@@ -35,7 +35,14 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
       - name: Click navigation on desktop and mobile Chrome
+        id: browser
+        continue-on-error: true
         run: node scripts/check-navigation.mjs
+      - name: 'Browser diagnosis: ${{ steps.browser.outputs.diag || ''passed'' }}'
+        run: echo 'Browser result appears in this step name.'
+      - name: Require browser checks to pass
+        if: steps.browser.outcome == 'failure'
+        run: exit 1
       - name: Exercise the local two-visitor guest journey
         run: node scripts/check-guest-journey.mjs
       - name: Inspect the public website without writes
