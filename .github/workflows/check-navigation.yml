@@ -33,6 +33,7 @@ jobs:
       - name: Exercise the local two-visitor guest journey
         run: node scripts/check-guest-journey.mjs
       - name: Inspect the public website without writes
+        # Recheck the published Instagram and Google Calendar update after rollout.
         run: node scripts/check-guest-journey.mjs --live
         env:
           LIVE_SITE: https://rocktober-dun.vercel.app
