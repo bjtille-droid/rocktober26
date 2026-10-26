@@ -64,6 +64,7 @@ async function request(path, body) {
 }
 
 function updateHud() {
+  document.getElementById('scoreEntry').hidden = mode !== 'finished';
   scoreDisplay.textContent = `SCORE ${String(game.score).padStart(6, '0')}`;
   livesDisplay.textContent = `LIVES ${game.lives}`;
   bestDisplay.textContent = `YOUR BEST ${best.toLocaleString()}`;

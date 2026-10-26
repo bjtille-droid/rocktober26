@@ -16,7 +16,11 @@ http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname.startsWith('/api/')) return await api(req, res);
     if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); return res.end(); }
-    const requested = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
+    const pages = {'/':'/index.html','/arcade':'/arcade.html','/roll-call':'/roll-call.html'};
+    if (url.pathname.length > 1 && url.pathname.endsWith('/')) {
+      res.writeHead(308, {Location: url.pathname.replace(/\/+$/, '') + url.search}); return res.end();
+    }
+    const requested = decodeURIComponent(pages[url.pathname] || url.pathname);
     const file = path.resolve(root, '.' + requested);
     if (!file.startsWith(root + path.sep) && file !== root) { res.writeHead(403); return res.end(); }
     const bytes = await readFile(file);

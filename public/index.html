@@ -4,26 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171514">
-  <meta name="description" content="Rocktober: Halloween night at Sloan Street Apartments, Clemson. Swell, karaoke, spooky games, and DJ Campbell. Bring a rock. October 31 at 8 PM.">
+  <meta name="description" content="Halloween night, October 31, 2026 at 8 PM Eastern. Sloan Street Apartments, Clemson. Bring a rock or get your head shaved.">
   <title>Rocktober — A Sloan Street Afterlife Production</title>
   <link rel="icon" href="/assets/bat.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
-  <script type="module" src="/community.js"></script>
-  <script type="module" src="/game.js"></script>
+  <script type="module" src="/party.js"></script>
 </head>
-<body>
-<main class="flyer">
-  <header class="masthead">
-    <a class="masthead-id" href="#top"><img src="/assets/bat.svg" width="39" height="30" alt="">Sloan Street // Clemson, SC</a>
-    <nav aria-label="Page sections"><a href="#lineup">The lineup</a><a href="#game">The arcade</a><a href="#costumes">Roll call</a><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a></nav>
-  </header>
+<body class="party-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="flyer">
+<header class="masthead"><a class="masthead-id" href="/"><img src="/assets/bat.svg" width="34" height="26" alt=""><span>Sloan Street <span class="brand-divider">//</span> Clemson</span></a><nav aria-label="Main navigation"><a class="page-link" href="/" aria-current="page"><span>Party</span></a><a class="page-link" href="/arcade"><span>Arcade</span></a><a class="page-link" href="/roll-call"><span>Roll call</span></a><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a></nav></header>
+<main id="main-content">
   <section class="hero" id="top" aria-labelledby="title">
     <div class="hero-copy">
       <img class="apparition" src="/assets/apparition.svg" width="145" height="200" alt="" aria-hidden="true">
-      <span class="overline">Halloween night · Saturday, October 31, 2026</span>
+      <span class="overline">Halloween night · 10.31.26</span>
       <h1 id="title">Rock<span>tober</span></h1>
       <p class="tagline">This is where the <em>ghouls and goblins</em> come out to play.</p>
-      <p class="hero-note">A Sloan Street Afterlife Production<br>Clemson University</p>
     </div>
     <div class="hero-side">
       <div class="countdown-board">
@@ -36,63 +33,33 @@
         </div>
         <div class="event-time"><span>October 31 · Halloween night</span><strong>8:00 PM</strong></div>
         <p class="event-place"><b>Sloan Street Apartments</b><br>Clemson University · Eastern time</p>
-        <div class="calendar-actions"><a class="calendar-link" href="https://calendar.google.com/calendar/r/eventedit?action=TEMPLATE&amp;text=Rocktober&amp;dates=20261101T000000Z%2F20261101T000000Z&amp;ctz=America%2FNew_York&amp;stz=America%2FNew_York&amp;etz=America%2FNew_York&amp;location=Sloan+Street+Apartments%2C+Clemson+University&amp;details=Halloween+night+at+8+PM+Eastern.+End+time+TBA.%0ABring+a+rock+or+get+your+head+shaved.%0ASwell+plays+first%2C+then+Karaoke+%2B+Spooky+Games%2C+then+DJ+Campbell.%0Ahttps%3A%2F%2Frocktober-dun.vercel.app" target="_blank" rel="noopener noreferrer">Add to Google Calendar ↗</a><a class="calendar-download" href="/rocktober.ics" download="rocktober.ics">Other calendars ↓</a></div>
       </div>
-      <div class="rock-warning"><strong>Bring a rock or get your head shaved.</strong><p>Your rock is your ticket through the door. No rock = shaved head.</p></div>
-      <button class="pledge-button" id="pledgeButton" type="button">🪨 I have my offering</button>
+      <div class="rock-warning"><strong>Bring a rock or get your head shaved.</strong><p>Your rock is your ticket in.</p></div>
+      <div class="calendar-actions event-actions"><a class="calendar-link" href="https://calendar.google.com/calendar/r/eventedit?action=TEMPLATE&amp;text=Rocktober&amp;dates=20261101T000000Z%2F20261101T000000Z&amp;ctz=America%2FNew_York&amp;stz=America%2FNew_York&amp;etz=America%2FNew_York&amp;location=Sloan+Street+Apartments%2C+Clemson+University&amp;details=Halloween+night+at+8+PM+Eastern.+End+time+TBA.%0ABring+a+rock+or+get+your+head+shaved.%0ASwell+plays+first%2C+then+Karaoke+%2B+Spooky+Games%2C+then+DJ+Campbell.%0Ahttps%3A%2F%2Frocktober-dun.vercel.app" target="_blank" rel="noopener noreferrer">Add to Google Calendar ↗</a><a class="calendar-download" href="/rocktober.ics" download="rocktober.ics">Other calendars ↓</a></div>
     </div>
   </section>
-  <div class="ticker" aria-label="Bring a rock. Costumes after dark. Swell live. Karaoke and spooky games. DJ Campbell closes."><div class="ticker-track" aria-hidden="true">
-    <span>Bring a rock <b>✦</b> Costumes after dark <b>✦</b> Swell live <b>✦</b> Karaoke + spooky games <b>✦</b> DJ Campbell closes <b>✦</b></span>
-    <span>Bring a rock <b>✦</b> Costumes after dark <b>✦</b> Swell live <b>✦</b> Karaoke + spooky games <b>✦</b> DJ Campbell closes <b>✦</b></span>
-  </div></div>
+  <section class="section party-lineup" id="lineup" aria-labelledby="lineup-title">
+    <div class="section-head"><div><span class="section-kicker">From first riff to last dance</span><h2 id="lineup-title">The night</h2></div><span class="lineup-note">Starts at dark o’clock. 8 PM.</span></div>
+    <ol class="running-order">
+      <li><span class="running-number">01</span><div><h3>Swell</h3><p>First up. Live and loud.</p></div><span class="running-mark" aria-hidden="true">♫</span></li>
+      <li><span class="running-number">02</span><div><h3>Karaoke + Spooky Games</h3><p>Sing like a monster. Play if you dare.</p></div><span class="running-mark" aria-hidden="true">✷</span></li>
+      <li><span class="running-number">03</span><div><h3>DJ Campbell</h3><p>Last to haunt the dance floor.</p></div><span class="running-mark" aria-hidden="true">✦</span></li>
+    </ol>
+  </section>  <section class="choose-door" aria-labelledby="door-title">
+    <span class="section-kicker" id="door-title">Until the haunting…</span>
+    <a class="door-link" href="/arcade"><span class="door-number">01 / PLAY</span><span><strong>Enter the arcade</strong><small>Rock Run. One more try for the high score.</small></span><span class="door-arrow" aria-hidden="true">↗</span></a>
+    <a class="door-link" href="/roll-call"><span class="door-number">02 / JOIN</span><span><strong>Pick your disguise</strong><small>Add your costume. See who’s haunting.</small></span><span class="door-arrow" aria-hidden="true">↗</span></a>
+  </section><details class="archive"><summary>Peek into the afterlife <span aria-hidden="true">+</span></summary>
   <section class="sightings" aria-label="Haunted Halloween artwork">
     <div class="archive-label"><div><small>Afterlife archive // 10.31</small><strong>After dark<br>at Sloan.</strong></div><p>A little nightmare fuel before the party.</p></div>
     <figure class="scene"><img src="/assets/haunted-house.svg" width="500" height="250" alt="A crooked haunted house beneath an orange moon, surrounded by bare trees and bats."><figcaption>01 / The lights are on. Nobody’s home.</figcaption></figure>
     <figure class="scene"><img src="/assets/forest-ghost.svg" width="500" height="250" alt="A pale, tattered apparition emerging from dark woods in a moonlit graveyard."><figcaption>02 / Take the shortcut. What could go wrong?</figcaption></figure>
   </section>
-  <section class="section" id="lineup" aria-labelledby="lineup-title">
-    <div class="section-head"><div><span class="section-kicker">The order of operations</span><h2 id="lineup-title">Live from the crypt</h2></div><p>Three turns at the controls. Stay until the last song if you dare.</p></div>
-    <div class="lineup">
-      <article class="act"><span class="act-no">01 // FIRST UP</span><h3>Swell</h3><p>Live band. The night starts loud.</p><span class="act-stamp" aria-hidden="true">♫</span></article>
-      <article class="act"><span class="act-no">02 // MIDDLE SLOT</span><h3>Karaoke + Spooky Games</h3><p>Sing like a monster, then see if you can survive the spooky games!</p><span class="act-stamp" aria-hidden="true">✷</span></article>
-      <article class="act"><span class="act-no">03 // LAST TO HAUNT</span><h3>DJ Campbell</h3><p>Closing out the night. Dance-floor spirits, assemble.</p><span class="act-stamp" aria-hidden="true">✦</span></article>
-    </div>
-  </section>
-  <div class="interactive-grid">
-    <section class="game-section" id="game" aria-labelledby="game-title">
-      <span class="section-kicker">The afterlife arcade // free play</span><h2 id="game-title">Rock Run</h2>
-      <p class="game-intro">Endless graveyard chaos. Collect rocks, build your combo, dodge ghosts, and climb the high-score table. Three lives. One haunting.</p>
-      <div class="game-screen">
-        <canvas id="gameCanvas" width="760" height="310" tabindex="0" aria-label="Rock Run arcade. Use left and right arrows or A and D to switch lanes. Collect rocks and dodge ghosts."></canvas>
-        <div class="game-hud"><span id="rockScore">Score 000000</span><span id="lives">Lives 3</span><span id="bestScore">Best 0</span></div>
-      </div>
-      <div class="game-controls" aria-label="Game controls"><button id="leftButton" type="button" aria-label="Move left">◀</button><button class="start-game" id="startGame" type="button">Start the run</button><button id="rightButton" type="button" aria-label="Move right">▶</button></div>
-      <div class="bank-row"><span>← / → or A / D. Touch buttons on mobile.</span><button id="bankGame" type="button" disabled>Bank score &amp; finish</button></div>
-      <p class="game-tip" id="gameStatus" aria-live="polite">The graveyard is waiting. Hit start.</p>
-      <form class="score-form" id="scoreForm"><label for="playerName">Your arcade name</label><div class="score-input-row"><input id="playerName" name="name" autocomplete="nickname" maxlength="24" placeholder="Name on the high-score table" required><button id="submitScore" type="submit" disabled>Post score</button></div></form>
-      <p class="game-tip" id="scoreStatus" aria-live="polite">Finish a run to post your score. Keep your arcade name clean.</p>
-      <div class="leaderboard-heading"><h3>The undead top 10</h3><span class="connection-status" id="leaderboardConnection">Connecting…</span></div>
-      <table class="leaderboard"><caption class="sr-only">Rock Run shared high scores</caption><thead><tr><th scope="col">Rank</th><th scope="col">Player</th><th scope="col">Score</th></tr></thead><tbody id="leaderboardBody"><tr><td colspan="3" class="empty-score">Calling the crypt…</td></tr></tbody></table>
-      <p class="game-tip">Your best score holds your place. New runs get harder the longer you last.</p>
-    </section>
-    <section class="roll-section" id="costumes" aria-labelledby="costume-title">
-      <div class="section-head"><span class="section-kicker">Tell the crypt</span><h2 id="costume-title">Costume roll call</h2><p>What are you haunting the party as? Everyone can see the guest book. Only you can change your entry.</p></div>
-      <div class="connection-line"><span id="communityConnection" class="connection-status">Connecting…</span><button id="refreshCommunity" class="text-button" type="button">Refresh ↻</button></div>
-      <form class="roll-form" id="costumeForm">
-        <div class="form-field"><label for="guestName">Your name</label><input id="guestName" name="name" maxlength="32" autocomplete="given-name" placeholder="e.g. Alex" required disabled></div>
-        <div class="form-field"><label for="costumeIdea">Costume plan</label><input id="costumeIdea" name="costume" maxlength="48" placeholder="e.g. Mothman" required disabled></div>
-        <div class="roll-actions"><button class="add-costume" id="costumeSubmit" type="submit" disabled>Add my costume +</button><button class="random-costume" id="randomCostume" type="button" disabled>Surprise me</button></div>
-      </form>
-      <p class="form-status" id="costumeStatus" aria-live="polite">Names and costumes are checked before they’re posted. Keep it clean.</p>
-      <div class="roll-list-header"><span>The guest book</span><span id="entryCount">0 costumes</span></div>
-      <div class="roll-list" id="rollList" aria-live="polite"><p class="empty-list">Listening for footsteps…</p></div>
-      <button class="delete-own" id="deleteMyCostume" type="button" hidden>Remove my entry</button>
-      <p class="roll-note">Your entry belongs to this browser. Keep its cookies to edit or remove it later. Other visitors can’t remove it.</p>
-    </section>
-  </div>
-  <footer class="flyer-footer"><span>A Sloan Street Afterlife Production</span><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a><span><span class="footer-star">✦</span> Come out and play <span class="footer-star">✦</span></span></footer>
+</details>
 </main>
-<noscript><p class="noscript-note">Enable JavaScript for the countdown, arcade, and shared guest book.</p></noscript>
+  <footer class="flyer-footer"><span>A Sloan Street Afterlife Production</span><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a><span><span class="footer-star">✦</span> Come out and play <span class="footer-star">✦</span></span></footer>
+</div>
+<nav class="mobile-nav" aria-label="Main navigation"><a class="page-link" href="/" aria-current="page"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10 12 3l8 7v10h-6v-6h-4v6H4Z"/></svg><span>Party</span></a><a class="page-link" href="/arcade"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M7 11v6m-3-3h6M12 7V3m5 10h.01M19 16h.01"/></svg><span>Arcade</span></a><a class="page-link" href="/roll-call"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11l-6 4v-4H3Z"/><path d="M7 9h10M7 12h6"/></svg><span>Roll call</span></a></nav>
+<noscript><p class="noscript-note">Enable JavaScript for the countdown.</p></noscript>
 </body>
 </html>

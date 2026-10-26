@@ -20,3 +20,155 @@ h1{position:relative;z-index:1;margin:0;font-family:Impact,Haettenschweiler,"Ari
 @media(max-width:590px){.roll-form input,.score-input-row input{font-size:16px}}
 
 .instagram-link{gap:7px}.instagram-icon{display:block;flex-shrink:0;width:24px;height:24px}.masthead nav .instagram-link{color:var(--red)}.calendar-actions{display:flex;align-items:center;flex-wrap:wrap;gap:0 16px}.calendar-download{display:inline-flex;align-items:center;min-height:32px;margin-top:5px;color:#c8bdac;font-size:.61rem;text-underline-offset:4px}.calendar-download:hover{color:var(--paper)}
+
+/* One page, one purpose. The original print texture stays behind each view. */
+[hidden]{display:none!important}
+#main-content{min-width:0}
+.skip-link{position:fixed;z-index:100;top:8px;left:8px;padding:12px;background:var(--green);color:var(--ink);transform:translateY(-180%)}
+.skip-link:focus{transform:none}
+.masthead .page-link{gap:6px;padding:4px 5px;text-decoration:none}
+.masthead .page-link[aria-current="page"]{color:var(--red);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}
+.mobile-nav{display:none}
+.party-page .hero{padding-block:30px;min-height:0}
+.party-page .hero-copy{padding-bottom:4px}
+.party-lineup .section-head{margin-bottom:12px}
+.lineup-note{color:var(--muted);font-size:.68rem;line-height:1.5}
+.running-order{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.running-order li{display:grid;grid-template-columns:34px 1fr 24px;align-items:center;gap:14px;padding:15px 2px;border-bottom:1px dashed #211d1a66}
+.running-order li:last-child{border-bottom:0}
+.running-number{align-self:start;padding-top:3px;color:var(--red);font-size:.76rem;font-weight:900}
+.running-order h3{margin:0;font-family:Georgia,serif;font-size:1.25rem;line-height:1.2}
+.running-order p{margin:4px 0 0;color:var(--muted);font-size:.74rem;line-height:1.4}
+.running-mark{color:var(--red);font-size:1.5rem;text-align:right}
+.choose-door{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;padding:25px 32px}
+.choose-door>.section-kicker{grid-column:1/-1;margin-bottom:12px}
+.door-link{display:grid;grid-template-columns:1fr 25px;align-items:center;gap:8px;padding:14px 0;border-top:2px solid var(--ink);text-decoration:none}
+.door-number{grid-column:1/-1;color:var(--red);font-size:.6rem;font-weight:900;letter-spacing:.1em}
+.door-link strong{display:block;font-family:Georgia,serif;font-size:1.22rem;line-height:1.25}
+.door-link small{display:block;margin-top:5px;color:var(--muted);font-size:.7rem;line-height:1.5}
+.door-arrow{font-size:1.65rem;color:var(--red)}
+.door-link:hover strong{text-decoration:underline;text-underline-offset:4px}
+.archive{border-top:1px dashed #211d1a66}
+.archive>summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:12px 32px;cursor:pointer;color:var(--muted);font-size:.65rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.archive[open]>summary{color:var(--red)}
+.archive[open]>summary>span{transform:rotate(45deg)}
+.archive .sightings{border-top:1px dashed #211d1a66;border-bottom:0}
+.subpage .flyer{display:flex;flex-direction:column;max-width:900px;min-height:calc(100svh - 48px)}
+.subpage .flyer-footer{margin-top:auto}
+.subpage .game-section,.subpage .roll-section{border:0;padding:32px 38px 36px}
+.arcade-page #main-content{background:var(--dark);color:var(--paper);flex:1}
+.arcade-page .game-section{max-width:840px;margin:auto;background:none}
+.page-title{font-family:Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;font-size:clamp(3rem,8vw,5.5rem);letter-spacing:-.025em;line-height:.94;text-transform:uppercase;text-shadow:none}
+.game-section .page-title{color:var(--paper)}
+.game-intro{font-size:.82rem;margin:12px 0 20px}
+.game-help,.roll-help{margin-top:18px;padding:0;border-top:1px dashed #eee3c959}
+.game-help summary,.roll-help summary{display:list-item;min-height:44px;padding:14px 0;cursor:pointer;font-size:.74rem;text-decoration:underline;text-underline-offset:4px}
+.game-help p{margin:0 0 12px;color:#c9beaa;font-size:.78rem;line-height:1.6}
+.roll-help{border-color:#211d1a66}
+.roll-help .roll-note{margin:0 0 12px;font-size:.74rem}
+.roll-page .roll-section{max-width:700px;margin:auto}
+.roll-page .section-head p{margin-top:14px;max-width:440px;font-size:.83rem;line-height:1.6}
+.roll-page .connection-line{margin:20px 0 14px}
+.roll-page .roll-form{gap:14px}
+.roll-page .roll-form label{font-size:.69rem;margin-bottom:6px}
+.roll-page .roll-form input{min-height:46px;font-size:16px}
+.roll-page .roll-actions button{min-height:46px;font-size:.74rem}
+.roll-page .form-status{font-size:.75rem;line-height:1.6}
+.roll-page .roll-list-header{font-size:.73rem}
+.roll-page .entry-name{font-size:.88rem}
+.roll-page .entry-costume{font-size:1rem}
+.roll-page .empty-list{font-size:1rem}
+.roll-page .connection-status,.arcade-page .connection-status{font-size:.65rem}
+.roll-page .text-button{font-size:.74rem;min-height:44px}
+.subpage .game-controls button{min-height:48px}
+.subpage .bank-row{font-size:.69rem}
+.subpage .bank-row button{min-height:44px;font-size:.68rem}
+.subpage .game-tip{font-size:.75rem}
+.subpage .score-form label{font-size:.72rem}
+.subpage .score-input-row input{font-size:16px;min-height:46px}
+.subpage .score-input-row button{min-height:46px;font-size:.74rem}
+.subpage .leaderboard th{font-size:.68rem}
+.subpage .leaderboard td{font-size:.85rem;padding-block:12px}
+@media(max-width:820px){
+  .masthead{gap:12px;padding-inline:18px;letter-spacing:.05em}
+  .masthead nav{gap:9px}
+  .party-page .hero{gap:22px;padding:25px}
+  .party-page .hero-side{max-width:none}
+}
+@media(max-width:680px){
+  body{padding:8px 8px calc(88px + env(safe-area-inset-bottom))}
+  .flyer{box-shadow:4px 4px 0 var(--orange)}
+  .masthead{min-height:58px;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;font-size:.6rem;letter-spacing:.025em}
+  .masthead-id{gap:6px;line-height:1.5}
+  .masthead-id>span{max-width:160px}
+  .brand-divider{color:var(--red)}
+  .masthead nav{flex-shrink:0}
+  .masthead nav .page-link{display:none}
+  .masthead nav .instagram-link{min-height:44px;gap:5px;font-size:.58rem}
+  .mobile-nav{position:fixed;z-index:50;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);padding:0 8px env(safe-area-inset-bottom);border-top:2px solid var(--orange);background:var(--dark);box-shadow:0 -5px 18px #0003}
+  .mobile-nav a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:62px;padding:10px 5px;color:var(--paper);font-size:.71rem;font-weight:900;letter-spacing:.035em;text-decoration:none;text-transform:uppercase}
+  .mobile-nav a[aria-current="page"]{color:var(--green);border-top:3px solid var(--green);padding-top:7px}
+  .mobile-nav svg{flex-shrink:0}
+  .party-page .hero{padding:21px 16px 23px;gap:20px}
+  .party-page h1{font-size:clamp(4.15rem,18vw,6rem)}
+  .party-page .overline{font-size:.6rem;letter-spacing:.1em;margin-bottom:13px}
+  .party-page .tagline{max-width:350px;margin-top:20px;font-size:1.14rem;line-height:1.22}
+  .party-page .apparition{width:105px;height:145px;right:0;top:0;opacity:.48}
+  .party-page .countdown-board{padding:12px;transform:none;box-shadow:4px 4px 0 var(--orange)}
+  .party-page .countdown{margin:12px 0}
+  .party-page .number{font-size:2rem}
+  .party-page .time-unit{padding:7px 2px}
+  .party-page .unit{font-size:.55rem}
+  .party-page .board-heading{font-size:.56rem;letter-spacing:.07em}
+  .party-page .event-time{font-size:.68rem}
+  .party-page .event-place{font-size:.76rem}
+  .party-page .rock-warning{margin-top:17px;transform:none;box-shadow:3px 3px 0 var(--ink)}
+  .party-page .rock-warning strong{font-size:.85rem;line-height:1.3;letter-spacing:.025em}
+  .party-page .rock-warning p{font-size:.85rem}
+  .calendar-actions{column-gap:10px}
+  .calendar-link{font-size:.66rem;min-height:44px}
+  .calendar-download{font-size:.58rem;min-height:44px}
+  .party-lineup{padding:22px 16px 12px}
+  .party-lineup .section-head{gap:7px}
+  .party-lineup h2{font-size:2.1rem}
+  .lineup-note{font-size:.68rem}
+  .running-order li{grid-template-columns:25px 1fr 20px;gap:8px;padding:13px 0}
+  .running-order h3{font-size:1.12rem}
+  .running-order p{font-size:.7rem}
+  .running-number{font-size:.67rem}
+  .choose-door{grid-template-columns:1fr;gap:0;padding:20px 16px 10px}
+  .choose-door>.section-kicker{margin-bottom:10px}
+  .door-link{padding:13px 0;gap:5px}
+  .door-link strong{font-size:1.17rem}
+  .door-link small{font-size:.7rem}
+  .door-number{font-size:.56rem}
+  .archive>summary{padding:14px 16px;font-size:.6rem}
+  .flyer-footer{flex-direction:row;align-items:center;gap:12px;padding:12px 14px;font-size:.55rem;letter-spacing:.06em}
+  .flyer-footer>span:first-child{max-width:180px;line-height:1.6}
+  .flyer-footer>span:last-child{display:none}
+  .flyer-footer .instagram-link{flex-shrink:0;min-height:44px}
+  .subpage .flyer{min-height:calc(100svh - 104px - env(safe-area-inset-bottom))}
+  .subpage .game-section,.subpage .roll-section{padding:24px 16px 26px}
+  .subpage .page-title{font-size:clamp(3rem,13vw,4.25rem)}
+  .subpage .game-intro{font-size:.75rem;margin:10px 0 18px}
+  .subpage .game-hud{font-size:.56rem;gap:4px}
+  .subpage .game-controls{gap:7px}
+  .subpage .game-controls button{min-width:46px}
+  .subpage .game-controls .start-game{font-size:.7rem}
+  .subpage .bank-row{font-size:.64rem;align-items:center}
+  .subpage .bank-row span{max-width:120px}
+  .subpage .bank-row button{font-size:.64rem;max-width:155px}
+  .subpage .score-input-row{flex-direction:column}
+  .subpage .game-tip{font-size:.72rem}
+  .subpage .leaderboard-heading{align-items:flex-start}
+  .subpage .leaderboard-heading h3{font-size:1.45rem}
+  .subpage .leaderboard-heading .connection-status{font-size:.56rem;text-align:right;max-width:90px;line-height:1.5}
+  .subpage .leaderboard td{font-size:.77rem}
+  .roll-page .section-head p{font-size:.78rem}
+  .roll-page .roll-list{max-height:none;overflow:visible}
+  .roll-page .roll-actions button{font-size:.67rem;padding:10px 9px;letter-spacing:.025em}
+  .roll-page .form-status{font-size:.71rem}
+  .roll-page .roll-list-header{font-size:.66rem}
+}
+
+.event-actions{margin-top:9px}.event-actions .calendar-link{color:var(--red)}.event-actions .calendar-download{color:var(--muted)}.event-actions a:hover{color:var(--ink)}

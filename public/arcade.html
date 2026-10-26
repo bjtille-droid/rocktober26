@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171514">
+  <meta name="description" content="Play Rock Run, the Rocktober Halloween arcade. Collect rocks, dodge ghosts, and climb the shared high-score table.">
+  <title>Rock Run Arcade — Rocktober</title>
+  <link rel="icon" href="/assets/bat.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/community.js"></script>
+  <script type="module" src="/game.js"></script>
+</head>
+<body class="arcade-page subpage">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="flyer">
+<header class="masthead"><a class="masthead-id" href="/"><img src="/assets/bat.svg" width="34" height="26" alt=""><span>Sloan Street <span class="brand-divider">//</span> Clemson</span></a><nav aria-label="Main navigation"><a class="page-link" href="/"><span>Party</span></a><a class="page-link" href="/arcade" aria-current="page"><span>Arcade</span></a><a class="page-link" href="/roll-call"><span>Roll call</span></a><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a></nav></header>
+<main id="main-content">
+    <section class="game-section" id="game" aria-labelledby="game-title">
+      <span class="section-kicker">Rocktober // The afterlife arcade</span><h1 class="page-title" id="game-title">Rock Run</h1>
+      <p class="game-intro">Collect rocks. Dodge ghosts. Beat the crypt.</p>
+      <div class="game-screen">
+        <canvas id="gameCanvas" width="760" height="310" tabindex="0" aria-label="Rock Run arcade. Use left and right arrows or A and D to switch lanes. Collect rocks and dodge ghosts."></canvas>
+        <div class="game-hud"><span id="rockScore">Score 000000</span><span id="lives">Lives 3</span><span id="bestScore">Best 0</span></div>
+      </div>
+      <div class="game-controls" aria-label="Game controls"><button id="leftButton" type="button" aria-label="Move left">◀</button><button class="start-game" id="startGame" type="button">Start the run</button><button id="rightButton" type="button" aria-label="Move right">▶</button></div>
+      <div class="bank-row"><span>Three lives. Make them count.</span><button id="bankGame" type="button" disabled>Bank score &amp; finish</button></div>
+      <p class="game-tip" id="gameStatus" aria-live="polite">The graveyard is waiting. Hit start.</p>
+      <div id="scoreEntry" hidden>
+      <form class="score-form" id="scoreForm"><label for="playerName">Your arcade name</label><div class="score-input-row"><input id="playerName" name="name" autocomplete="nickname" maxlength="24" placeholder="Name on the high-score table" required><button id="submitScore" type="submit" disabled>Post score</button></div></form>
+      <p class="game-tip" id="scoreStatus" aria-live="polite">Finish a run to post your score. Keep your arcade name clean.</p>
+      </div>
+      <details class="game-help"><summary>How to play</summary><p>Use the arrow buttons or swipe to change lanes. On a keyboard, use ← / → or A / D. Collect rocks to build your combo and dodge ghosts to keep your three lives. Pause any time, or bank your score to finish early.</p></details>
+      <div class="leaderboard-heading"><h3>The undead top 10</h3><span class="connection-status" id="leaderboardConnection">Connecting…</span></div>
+      <table class="leaderboard"><caption class="sr-only">Rock Run shared high scores</caption><thead><tr><th scope="col">Rank</th><th scope="col">Player</th><th scope="col">Score</th></tr></thead><tbody id="leaderboardBody"><tr><td colspan="3" class="empty-score">Calling the crypt…</td></tr></tbody></table>
+      <p class="game-tip">Your best score holds your place. New runs get harder the longer you last.</p>
+    </section>
+
+</main>
+  <footer class="flyer-footer"><span>A Sloan Street Afterlife Production</span><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a><span><span class="footer-star">✦</span> Come out and play <span class="footer-star">✦</span></span></footer>
+</div>
+<nav class="mobile-nav" aria-label="Main navigation"><a class="page-link" href="/"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10 12 3l8 7v10h-6v-6h-4v6H4Z"/></svg><span>Party</span></a><a class="page-link" href="/arcade" aria-current="page"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M7 11v6m-3-3h6M12 7V3m5 10h.01M19 16h.01"/></svg><span>Arcade</span></a><a class="page-link" href="/roll-call"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11l-6 4v-4H3Z"/><path d="M7 9h10M7 12h6"/></svg><span>Roll call</span></a></nav>
+<noscript><p class="noscript-note">Enable JavaScript for the shared arcade and guest book.</p></noscript>
+</body>
+</html>

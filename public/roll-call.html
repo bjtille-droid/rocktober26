@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171514">
+  <meta name="description" content="Pick your disguise for Rocktober at Sloan Street Apartments. Add your costume to the shared Halloween guest book.">
+  <title>Costume Roll Call — Rocktober</title>
+  <link rel="icon" href="/assets/bat.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/community.js"></script>
+</head>
+<body class="roll-page subpage">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="flyer">
+<header class="masthead"><a class="masthead-id" href="/"><img src="/assets/bat.svg" width="34" height="26" alt=""><span>Sloan Street <span class="brand-divider">//</span> Clemson</span></a><nav aria-label="Main navigation"><a class="page-link" href="/"><span>Party</span></a><a class="page-link" href="/arcade"><span>Arcade</span></a><a class="page-link" href="/roll-call" aria-current="page"><span>Roll call</span></a><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a></nav></header>
+<main id="main-content">
+    <section class="roll-section" id="costumes" aria-labelledby="costume-title">
+      <div class="section-head"><span class="section-kicker">Rocktober // Tell the crypt</span><h1 class="page-title" id="costume-title">Costume<br>roll call</h1><p>Pick your disguise. Everyone can see it; only you can edit it.</p></div>
+      <div class="connection-line"><span id="communityConnection" class="connection-status">Connecting…</span><button id="refreshCommunity" class="text-button" type="button">Refresh ↻</button></div>
+      <form class="roll-form" id="costumeForm">
+        <div class="form-field"><label for="guestName">Your name</label><input id="guestName" name="name" maxlength="32" autocomplete="given-name" placeholder="e.g. Alex" required disabled></div>
+        <div class="form-field"><label for="costumeIdea">Costume plan</label><input id="costumeIdea" name="costume" maxlength="48" placeholder="e.g. Mothman" required disabled></div>
+        <div class="roll-actions"><button class="add-costume" id="costumeSubmit" type="submit" disabled>Add my costume +</button><button class="random-costume" id="randomCostume" type="button" disabled>Surprise me</button></div>
+      </form>
+      <p class="form-status" id="costumeStatus" aria-live="polite">Names and costumes are checked before they’re posted. Keep it clean.</p>
+      <div class="roll-list-header"><span>The guest book</span><span id="entryCount">0 costumes</span></div>
+      <div class="roll-list" id="rollList" aria-live="polite"><p class="empty-list">Listening for footsteps…</p></div>
+      <button class="delete-own" id="deleteMyCostume" type="button" hidden>Remove my entry</button>
+      <details class="roll-help"><summary>How your entry works</summary><p class="roll-note">Your entry belongs to this browser. Keep its cookies to edit or remove it later. Other visitors can’t remove it.</p></details>
+    </section>
+
+</main>
+  <footer class="flyer-footer"><span>A Sloan Street Afterlife Production</span><a class="instagram-link" href="https://www.instagram.com/rocktober_ss119_4/" target="_blank" rel="noopener noreferrer"><img class="instagram-icon" src="/assets/instagram.svg" width="24" height="24" alt="" aria-hidden="true">Instagram</a><span><span class="footer-star">✦</span> Come out and play <span class="footer-star">✦</span></span></footer>
+</div>
+<nav class="mobile-nav" aria-label="Main navigation"><a class="page-link" href="/"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10 12 3l8 7v10h-6v-6h-4v6H4Z"/></svg><span>Party</span></a><a class="page-link" href="/arcade"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M7 11v6m-3-3h6M12 7V3m5 10h.01M19 16h.01"/></svg><span>Arcade</span></a><a class="page-link" href="/roll-call" aria-current="page"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11l-6 4v-4H3Z"/><path d="M7 9h10M7 12h6"/></svg><span>Roll call</span></a></nav>
+<noscript><p class="noscript-note">Enable JavaScript for the shared arcade and guest book.</p></noscript>
+</body>
+</html>

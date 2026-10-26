@@ -4,6 +4,14 @@ A Sloan Street Afterlife Production: Halloween, October 31, 2026 at 8 PM Eastern
 
 The site keeps its printed campus-flyer look, haunted illustrations, live countdown, Swell / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade. Guests can open a prefilled Google Calendar event or download the event for other calendar apps. Both use the same 8 PM Eastern start. The Google link is a start-time reminder with no assumed party end time; guests choose Save in Google Calendar.
 
+## Pages
+
+- `/` is a shorter party flyer: countdown, time and place, rock rule, lineup, and links to the two interactive pages. Haunted artwork is tucked into an optional disclosure. It does not load the game or poll the community API.
+- `/arcade` is Rock Run and its shared leaderboard. The score-name form appears after a run ends.
+- `/roll-call` is the shared costume guest book.
+
+Phone visitors have a fixed three-link navigation bar with the current page marked. All routes are real pages that can be linked, reloaded, and reached with browser Back. The existing website address stays the same. Legacy home fragments `#game` and `#costumes` forward to their new pages.
+
 ## Shared features
 
 - Rock Run is an endless three-lane arcade with rock combos, survival points, increasing difficulty, three lives, and a ten-minute cap. Players may pause/resume with the main button on phones or with P/Escape, and bank a score early.
@@ -49,6 +57,6 @@ No analytics, camera access, AI portrait generation, or third-party browser scri
 
 The host can moderate entries directly in the dedicated Supabase project's table editor. Tables are prefixed `rocktober_`. Expired run/rate records are periodically cleaned during rate-limit calls. No guest receives database administration access.
 
-The event time is set in `public/community.js`; its label is in `public/index.html` and its Google Calendar link is in `public/index.html`; the calendar download is `public/rocktober.ics`. Update the countdown, label, link, and download together if the date changes. Game rule changes must update `RULES_VERSION` in `public/game-core.js` to keep old replays from being accepted under new rules.
+The event time is set in `public/party.js`; its label is in `public/index.html` and its Google Calendar link is in `public/index.html`; the calendar download is `public/rocktober.ics`. Update the countdown, label, link, and download together if the date changes. Game rule changes must update `RULES_VERSION` in `public/game-core.js` to keep old replays from being accepted under new rules.
 
 Third-party notices and exact source provenance are in `vendor/obscenity/LICENSE.md` and `vendor/obscenity/PROVENANCE.md`.

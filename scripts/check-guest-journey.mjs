@@ -26,7 +26,7 @@ async function startLocal() {
 }
 
 async function waitForPublishedCalendar() {
-  const deadline = Date.now() + 60000;
+  const deadline = Date.now() + 120000;
   while (Date.now() < deadline) {
     try {
       const response = await fetch(`${origin}/rocktober.ics`, {
@@ -35,12 +35,16 @@ async function waitForPublishedCalendar() {
       if (response.ok && (await response.text()).includes('DTSTART:20261101T000000Z')) {
         const homepage = await fetch(origin, { cache: 'no-store', signal: AbortSignal.timeout(5000) });
         const text = await homepage.text();
-        if (homepage.ok && text.includes('rocktober_ss119_4') && text.includes('calendar.google.com')) return;
+        if (homepage.ok && text.includes('mobile-nav') && !text.includes('id="gameCanvas"')) {
+          const arcade = await fetch(origin + '/arcade', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+          const roll = await fetch(origin + '/roll-call', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+          if (arcade.ok && roll.ok && (await arcade.text()).includes('id="gameCanvas"') && (await roll.text()).includes('id="costumeForm"')) return;
+        }
       }
     } catch {}
     await pause(2000);
   }
-  throw new Error('The updated Instagram and Google Calendar deployment was not ready within 60 seconds');
+  throw new Error('The three-page deployment was not ready within 120 seconds');
 }
 
 async function localJourney() {
@@ -67,7 +71,7 @@ async function localJourney() {
   a.on('request', request => {
     if (new URL(request.url()).pathname === '/api/runs/start') startRequests++;
   });
-  await a.goto(origin, { waitUntil: 'domcontentloaded' });
+  await a.goto(origin + '/arcade', { waitUntil: 'domcontentloaded' });
   await a.bringToFront();
   await Promise.race([initialSeen.promise, pause(5000).then(() => { throw new Error('Initial community bootstrap was not requested'); })]);
   const startedResponse = a.waitForResponse(matching('/api/runs/start', 'POST'));
@@ -109,9 +113,11 @@ async function localJourney() {
   assert.ok(score.score >= 5, 'Score must include verified survival points');
   await a.waitForFunction(() => document.getElementById('scoreStatus').textContent.includes('Verified:'));
 
-  await b.goto(origin, { waitUntil: 'networkidle' });
+  await b.goto(origin + '/arcade', { waitUntil: 'networkidle' });
   await b.waitForFunction(() => document.getElementById('leaderboardBody').textContent.includes('Local Arcade'));
 
+  await a.goto(origin + '/roll-call', { waitUntil: 'networkidle' });
+  await b.goto(origin + '/roll-call', { waitUntil: 'networkidle' });
   await a.locator('#guestName').fill('Local Specter');
   await a.locator('#costumeIdea').fill('Ghost');
   const addedResponse = a.waitForResponse(matching('/api/costumes', 'POST'));
@@ -182,7 +188,8 @@ async function localJourney() {
 }
 
 async function publicReadOnly() {
-  for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+  const routes = ['/', '/arcade', '/roll-call'];
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const blockedWrites = [], failures = [], errors = [];
     await context.route('**/*', route => {
@@ -200,52 +207,66 @@ async function publicReadOnly() {
         failures.push(`${new URL(response.url()).pathname}: ${response.status()}`);
       }
     });
-    const response = await page.goto(origin, { waitUntil: 'networkidle' });
-    assert.equal(response.status(), 200, 'Public homepage must be accessible without login');
-    await page.waitForFunction(() => document.getElementById('communityConnection').classList.contains('live') && document.getElementById('leaderboardConnection').classList.contains('live'));
+    for (const [index, path] of routes.entries()) {
+      const response = await page.goto(origin + path, { waitUntil: 'networkidle' });
+      assert.equal(response.status(), 200, `Public ${path} must be accessible without login`);
+      if (path === '/') {
+        assert.equal(await page.locator('form,canvas,#rollList,#leaderboardBody').count(), 0, 'Home must remain a concise party page');
+        assert.equal(await page.evaluate(() => performance.getEntriesByType('resource').filter(entry => new URL(entry.name).pathname.startsWith('/api/')).length), 0, 'Home must not fetch the shared backend');
+        if (viewport.width < 600) assert.ok(await page.evaluate(() => document.documentElement.scrollHeight) <= viewport.height * 3.5, 'Phone homepage must stay compact');
+        const google = new URL(await page.locator('a.calendar-link').getAttribute('href'));
+        assert.equal(google.origin, 'https://calendar.google.com');
+        assert.equal(google.searchParams.get('action'), 'TEMPLATE');
+        assert.equal(google.searchParams.get('text'), 'Rocktober');
+        assert.equal(google.searchParams.get('dates').split('/')[0], '20261101T000000Z');
+        assert.equal(google.searchParams.get('ctz'), 'America/New_York');
+        assert.equal(await page.locator('a.calendar-download').getAttribute('href'), '/rocktober.ics');
+      } else if (path === '/arcade') {
+        await page.waitForFunction(() => document.getElementById('leaderboardConnection').classList.contains('live'));
+        assert.equal(await page.locator('#gameCanvas').count(), 1);
+        assert.equal(await page.locator('#costumeForm').count(), 0);
+      } else {
+        await page.waitForFunction(() => document.getElementById('communityConnection').classList.contains('live'));
+        assert.equal(await page.locator('#costumeForm').count(), 1);
+        assert.equal(await page.locator('canvas').count(), 0);
+      }
+      await page.waitForFunction(() => [...document.images].every(image => image.complete && image.naturalWidth > 0));
+      const instagram = page.locator('a[href^="https://www.instagram.com/"]');
+      assert.ok(await instagram.count() >= 1, 'Every page must retain its Instagram link');
+      for (const link of await instagram.all()) {
+        const url = new URL(await link.getAttribute('href'));
+        assert.equal(url.pathname.replace(/\/+$/, ''), '/rocktober_ss119_4');
+        assert.equal((await link.textContent()).trim(), 'Instagram');
+        assert.equal(await link.locator('img[src="/assets/instagram.svg"]').count(), 1);
+      }
+      assert.ok(!(await page.locator('body').innerText()).toLowerCase().includes('rocktober_ss119_4'));
+      for (const selector of ['.masthead nav', '.mobile-nav']) {
+        assert.equal(await page.locator(`${selector} a[aria-current="page"]`).count(), 1);
+        assert.equal(await page.locator(`${selector} a[aria-current="page"]`).getAttribute('href'), path);
+      }
+      const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: innerWidth }));
+      assert.ok(dimensions.width <= dimensions.viewport + 1, `Public ${path} must fit ${viewport.width}px`);
+      const navSelector = viewport.width < 600 ? '.mobile-nav' : '.masthead nav';
+      const target = routes[(index + 1) % routes.length];
+      await page.locator(`${navSelector} a[href="${target}"]`).click();
+      await page.waitForURL(url => url.pathname === target);
+      await page.waitForLoadState('networkidle');
+    }
     const health = await page.request.get(`${origin}/api/health`);
     assert.equal(health.status(), 200);
     const state = await health.json();
     assert.equal(state.configured, true);
     assert.equal(state.mode, 'shared');
-    await page.waitForFunction(() => [...document.images].every(image => image.complete && image.naturalWidth > 0));
     const calendar = await page.request.get(`${origin}/rocktober.ics`);
     assert.equal(calendar.status(), 200);
     assert.ok((await calendar.text()).includes('DTSTART:20261101T000000Z'));
-    const hashes = await page.locator('.masthead a[href^="#"]').evaluateAll(links => links.map(link => link.getAttribute('href')));
-    for (const hash of hashes) {
-      const link = page.locator(`.masthead a[href="${hash}"]`);
-      await link.click();
-      assert.equal(new URL(page.url()).hash, hash);
-    }
-    const instagram = page.locator('a[href^="https://www.instagram.com/"]');
-    assert.equal(await instagram.count(), 2, 'Both public Instagram links must remain present');
-    for (const link of await instagram.all()) {
-      const url = new URL(await link.getAttribute('href'));
-      assert.equal(url.pathname.replace(/\/+$/, ''), '/rocktober_ss119_4');
-      assert.equal((await link.textContent()).trim(), 'Instagram');
-      const logo = link.locator('img[src="/assets/instagram.svg"]');
-      assert.equal(await logo.count(), 1);
-      assert.ok(await logo.evaluate(image => image.complete && image.naturalWidth > 0));
-    }
-    const visibleText = (await page.locator('body').innerText()).toLowerCase();
-    assert.ok(!visibleText.includes('rocktober_ss119_4'), 'The account handle must not appear in visible copy');
-    const google = new URL(await page.locator('a.calendar-link').getAttribute('href'));
-    assert.equal(google.origin, 'https://calendar.google.com');
-    assert.equal(google.searchParams.get('action'), 'TEMPLATE');
-    assert.equal(google.searchParams.get('text'), 'Rocktober');
-    assert.equal(google.searchParams.get('dates').split('/')[0], '20261101T000000Z');
-    assert.equal(google.searchParams.get('ctz'), 'America/New_York');
-    assert.equal(await page.locator('a.calendar-download').getAttribute('href'), '/rocktober.ics');
-    const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: innerWidth }));
-    assert.ok(dimensions.width <= dimensions.viewport + 1, 'Public page must fit its viewport');
     assert.deepEqual(blockedWrites, [], 'Read-only inspection must not attempt production writes');
-    assert.deepEqual(failures, [], 'Public page must load all same-origin resources');
-    assert.deepEqual(errors, [], 'Public page must have no console or runtime errors');
+    assert.deepEqual(failures, [], 'All three public pages must load their resources');
+    assert.deepEqual(errors, [], 'All three public pages must have no browser errors');
     console.log(JSON.stringify({ verified: true, environment: 'public-read-only', viewport: viewport.width,
-      checks: ['public access', 'shared backend status', 'all artwork and Instagram logos loaded',
-        'updated Instagram account', 'Google Calendar event details', 'ICS date', 'header clicks',
-        'viewport fit', 'no browser errors', 'no writes'] }));
+      checks: ['three public pages', 'compact home without backend fetch', 'separate arcade and roll call',
+        'correct current-page tabs', 'real page navigation', 'artwork and Instagram logos',
+        'calendar details', 'shared backend status', 'no overflow', 'no browser errors', 'no writes'] }));
     await context.close();
   }
 }

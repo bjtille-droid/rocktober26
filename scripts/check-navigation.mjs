@@ -42,48 +42,91 @@ async function checkHitTarget(locator, label) {
   assert.ok(hit.receivesClick, `${label} is covered by ${hit.interceptedBy}`);
 }
 
+const routes = ['/', '/arcade', '/roll-call'];
+
+async function verifyPage(page, path, viewport) {
+  const header = page.locator('.masthead nav');
+  const mobile = page.locator('.mobile-nav');
+  assert.equal(await header.locator('a[href="/"],a[href="/arcade"],a[href="/roll-call"]').count(), 3);
+  assert.equal(await mobile.locator('a').count(), 3);
+  for (const nav of [header, mobile]) {
+    assert.equal(await nav.locator('a[aria-current="page"]').count(), 1, 'Only the current page gets aria-current');
+    assert.equal(await nav.locator('a[aria-current="page"]').getAttribute('href'), path);
+  }
+  assert.equal(await mobile.isVisible(), viewport.mobile, 'Bottom navigation should be phone-only');
+  if (viewport.mobile) {
+    for (const link of await mobile.locator('a').all()) {
+      const box = await link.boundingBox();
+      assert.ok(box.height >= 44, 'Mobile page tabs must have comfortable tap targets');
+      await checkHitTarget(link, `${viewport.label}: bottom page tab`);
+    }
+  }
+  if (path === '/') {
+    assert.equal(await page.locator('canvas,form,#leaderboardBody,#rollList').count(), 0, 'Party page must stay focused on party details');
+    const apiResources = await page.evaluate(() => performance.getEntriesByType('resource').filter(entry => new URL(entry.name).pathname.startsWith('/api/')).length);
+    assert.equal(apiResources, 0, 'Party details must load without community or game API requests');
+    assert.equal(await page.locator('#days,#hours,#minutes,#seconds').count(), 4);
+    if (viewport.width === 390) {
+      const warning = await page.locator('.rock-warning').boundingBox();
+      const tabs = await mobile.boundingBox();
+      assert.ok(warning.y + warning.height <= tabs.y + 1,
+        `Rock warning must fit the first phone screen: y=${warning.y}, height=${warning.height}, navTop=${tabs.y}`);
+    }
+    if (viewport.mobile) {
+      const height = await page.evaluate(() => document.documentElement.scrollHeight);
+      assert.ok(height <= viewport.height * 3.5, `Party page is too long for a phone: ${height}px`);
+    }
+  } else if (path === '/arcade') {
+    assert.equal(await page.locator('#gameCanvas,#leaderboardBody,#scoreForm').count(), 3);
+    assert.equal(await page.locator('#costumeForm,#rollList').count(), 0, 'Arcade must not include the costume form');
+  } else {
+    assert.equal(await page.locator('#costumeForm,#rollList').count(), 2);
+    assert.equal(await page.locator('canvas,#scoreForm,#leaderboardBody').count(), 0, 'Roll call must not include the game');
+  }
+  const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: innerWidth }));
+  assert.ok(dimensions.width <= dimensions.viewport + 1, `${viewport.label} ${path} has horizontal overflow`);
+  if (viewport.mobile) {
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    const footer = await page.locator('.flyer-footer').boundingBox();
+    const tabs = await mobile.boundingBox();
+    assert.ok(footer.y + footer.height <= tabs.y + 1, 'Fixed navigation must not cover the footer');
+  }
+}
+
 try {
   await waitForServer();
   browser = await chromium.launch({ channel: 'chrome', headless: true });
-
   for (const viewport of [
-    { label: 'desktop', width: 1440, height: 1000 },
-    { label: 'mobile', width: 390, height: 844 }
+    { label: 'desktop', width: 1440, height: 1000, mobile: false },
+    { label: 'phone', width: 390, height: 844, mobile: true },
+    { label: 'small-phone', width: 320, height: 740, mobile: true }
   ]) {
     const context = await browser.newContext({
-      viewport: { width: viewport.width, height: viewport.height },
-      reducedMotion: 'reduce',
-      isMobile: viewport.label === 'mobile',
-      hasTouch: viewport.label === 'mobile'
+      viewport: { width: viewport.width, height: viewport.height }, reducedMotion: 'reduce',
+      isMobile: viewport.mobile, hasTouch: viewport.mobile
     });
-    // A real click opens a popup, but Instagram itself is never contacted.
     await context.route('https://www.instagram.com/**', route => route.fulfill({
-      status: 200, contentType: 'text/html',
-      body: '<!doctype html><title>Instagram navigation intercepted</title>'
+      status: 200, contentType: 'text/html', body: '<!doctype html><title>Instagram navigation intercepted</title>'
     }));
     await context.route('https://calendar.google.com/**', route => route.fulfill({
-      status: 200, contentType: 'text/html',
-      body: '<!doctype html><title>Google Calendar navigation intercepted</title>'
+      status: 200, contentType: 'text/html', body: '<!doctype html><title>Google Calendar navigation intercepted</title>'
     }));
     const page = await context.newPage();
-    const homepage = await page.goto(origin, { waitUntil: 'networkidle' });
-    assert.equal(homepage.status(), 200, 'Local homepage must return HTTP 200');
-
-    const links = await page.locator('.masthead a[href^="#"]').evaluateAll(nodes =>
-      nodes.map(node => ({ href: node.getAttribute('href'), text: node.innerText.trim() }))
-    );
-    assert.equal(links.length, 4, 'Brand plus all three header section links must exist');
-
-    for (const link of links) {
-      await page.goto(origin, { waitUntil: 'networkidle' });
-      const locator = page.locator(`.masthead a[href="${link.href}"]`);
-      assert.equal(await page.locator(link.href).count(), 1, `${link.href} target must exist`);
-      await checkHitTarget(locator, `${viewport.label}: ${link.text}`);
-      await locator.click({ timeout: 5000 });
-      await page.waitForFunction(hash => location.hash === hash, link.href);
-      assert.equal(new URL(page.url()).hash, link.href, `${link.text} should navigate`);
+    const runtimeErrors = [];
+    page.on('pageerror', error => runtimeErrors.push(error.message));
+    for (const [index, path] of routes.entries()) {
+      const response = await page.goto(origin + path, { waitUntil: 'networkidle' });
+      assert.equal(response.status(), 200, `${path} must be a real page`);
+      await verifyPage(page, path, viewport);
+      const target = routes[(index + 1) % routes.length];
+      const navigation = viewport.mobile ? '.mobile-nav' : '.masthead nav';
+      const link = page.locator(`${navigation} a[href="${target}"]`);
+      await checkHitTarget(link, `${viewport.label}: ${path} to ${target}`);
+      await link.click();
+      await page.waitForURL(url => url.pathname === target);
+      await page.waitForLoadState('networkidle');
+      assert.equal(await page.locator(`${navigation} a[aria-current="page"]`).getAttribute('href'), target);
     }
-
     await page.goto(origin, { waitUntil: 'networkidle' });
     const instagram = page.locator('a[href^="https://www.instagram.com/"]');
     assert.equal(await instagram.count(), 2, 'Header and footer Instagram links must exist');
@@ -145,15 +188,12 @@ try {
     const calendarText = Buffer.concat(chunks).toString('utf8');
     assert.ok(calendarText.includes('DTSTART:20261101T000000Z'), 'Calendar must start at Halloween 8 PM Eastern');
 
-    const dimensions = await page.evaluate(() => ({
-      viewport: innerWidth, width: document.documentElement.scrollWidth
-    }));
-    assert.ok(dimensions.width <= dimensions.viewport + 1,
-      `${viewport.label} has horizontal overflow: ${JSON.stringify(dimensions)}`);
+
+    assert.deepEqual(runtimeErrors, [], 'All three pages must avoid runtime errors');
     console.log(JSON.stringify({ viewport: viewport.label, verified: true,
-      checks: ['header hit targets', 'all section-link clicks', 'both Instagram popups',
-        'Instagram logos and updated account', 'Instagram-only labels', 'no visible username',
-        'prefilled Google Calendar popup', 'ICS download and date', 'no horizontal overflow'] }));
+      checks: ['real three-page navigation', 'correct current-page states', 'phone bottom tabs',
+        'focused compact party page without backend fetch', 'separate arcade and roll-call forms',
+        'Instagram links and logos', 'Google Calendar popup', 'ICS download', 'no overflow or hidden footer'] }));
     await context.close();
   }
 } finally {

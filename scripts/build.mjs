@@ -1,4 +1,4 @@
 import { access } from 'node:fs/promises';
-const required = ['public/index.html', 'public/styles.css', 'public/community.js', 'public/game.js', 'public/game-core.js', 'public/rocktober.ics', 'api/index.js'];
+const required = ['public/index.html', 'public/arcade.html', 'public/roll-call.html', 'public/party.js', 'public/styles.css', 'public/community.js', 'public/game.js', 'public/game-core.js', 'public/rocktober.ics', 'api/index.js'];
 await Promise.all(required.map(path => access(new URL('../' + path, import.meta.url))));
 console.log('Rocktober static site and API are ready.');
