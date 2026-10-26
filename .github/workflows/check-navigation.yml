@@ -1,6 +1,8 @@
 name: Check navigation in Chrome
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -36,6 +38,7 @@ jobs:
       - name: Exercise the local two-visitor guest journey
         run: node scripts/check-guest-journey.mjs
       - name: Inspect the public website without writes
+        if: github.event_name != 'pull_request'
         # Recheck the published Instagram and Google Calendar update after rollout.
         run: node scripts/check-guest-journey.mjs --live
         env:
