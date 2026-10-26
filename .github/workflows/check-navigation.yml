@@ -18,6 +18,7 @@ on:
       - 'public/game.js'
       - 'public/rocktober.ics'
       - 'public/assets/instagram.svg'
+      - 'public/assets/bat-flight.svg'
       - 'server.mjs'
 permissions:
   contents: read
