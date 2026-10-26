@@ -6,7 +6,7 @@ The site keeps its printed campus-flyer look, haunted illustrations, live countd
 
 ## Pages
 
-- `/` is a shorter party flyer: countdown, time and place, rock rule, lineup, and links to the two interactive pages. Tap the perched bat to release a small flock; it stays within the title area and never intercepts links. Reduced-motion visitors get a static response. Haunted artwork is tucked into an optional disclosure. The page does not load the game or poll the community API.
+- `/` is a shorter party flyer: countdown, time and place, rock rule, lineup, and links to the two interactive pages. Haunted artwork is tucked into an optional disclosure. The page does not load the game or poll the community API.
 - `/arcade` is Rock Run and its shared leaderboard. The score-name form appears after a run ends.
 - `/roll-call` is the shared costume guest book.
 

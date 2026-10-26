@@ -73,6 +73,8 @@ async function verifyPage(page, path, viewport) {
     }
   }
   if (path === '/') {
+    assert.equal(await page.locator('#batTrigger,#batFlightLayer,img[src="/assets/bat-flight.svg"]').count(), 0, 'Interactive bats must be removed');
+    assert.equal(await page.locator('img[src="/assets/bat.svg"]').count(), 1, 'The static header brand remains');
     assert.equal(await page.locator('canvas,form,#leaderboardBody,#rollList').count(), 0, 'Party page must stay focused on party details');
     const apiResources = await page.evaluate(() => performance.getEntriesByType('resource').filter(entry => new URL(entry.name).pathname.startsWith('/api/')).length);
     assert.equal(apiResources, 0, 'Party details must load without community or game API requests');
@@ -105,57 +107,6 @@ async function verifyPage(page, path, viewport) {
   }
 }
 
-async function verifyBats(page, viewport, standardMotion = false) {
-  testStage = `${viewport.label}: bat setup`;
-  const trigger = page.locator('#batTrigger');
-  const layer = page.locator('#batFlightLayer');
-  const caption = page.locator('#batCaption');
-  const status = page.locator('#batStatus');
-  assert.equal(await trigger.evaluate(element => element.tagName), 'BUTTON');
-  assert.equal(await trigger.getAttribute('aria-label'), 'Wake the bats');
-  assert.equal(await status.getAttribute('role'), 'status');
-  assert.equal(await layer.evaluate(element => getComputedStyle(element).pointerEvents), 'none');
-  const heroBounds = await page.locator('.hero-copy').boundingBox();
-  const layerBounds = await layer.boundingBox();
-  assert.ok(layerBounds.x >= heroBounds.x - 1 && layerBounds.y >= heroBounds.y - 1 &&
-    layerBounds.x + layerBounds.width <= heroBounds.x + heroBounds.width + 1 &&
-    layerBounds.y + layerBounds.height <= heroBounds.y + heroBounds.height + 1,
-    'Bat flight must stay inside the title area');
-  const before = await page.locator('.hero').boundingBox();
-  const beforeHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-  const initialStatus = await status.textContent();
-  testStage = `${viewport.label}: bat pointer feedback`;
-  await checkHitTarget(trigger, `${viewport.label}: wake the bats`);
-  if (viewport.mobile) await trigger.tap(); else await trigger.click();
-  await page.waitForFunction(initial => document.getElementById('batStatus').textContent.trim() &&
-    document.getElementById('batStatus').textContent !== initial, initialStatus);
-  assert.equal(await caption.textContent(), 'Spooked!');
-  assert.ok(await trigger.evaluate(element => element.classList.contains('is-awake')));
-  testStage = `${viewport.label}: ${standardMotion ? 'animated' : 'reduced'} flight contract`;
-  assert.equal(await layer.locator('.flying-bat').count(), standardMotion ? 6 : 0,
-    standardMotion ? 'Normal motion must release six bats' : 'Reduced motion must skip flying bats');
-  if (standardMotion) assert.ok(await layer.evaluate(element => element.getAnimations({ subtree: true }).length > 0), 'Released bats must animate');
-  for (const key of ['Enter', 'Space']) {
-    testStage = `${viewport.label}: bat ${key} feedback`;
-    const previous = await status.textContent();
-    await trigger.focus();
-    await trigger.press(key);
-    await page.waitForFunction(prior => document.getElementById('batStatus').textContent !== prior, previous);
-    assert.equal(await caption.textContent(), 'Spooked!');
-    assert.equal(await layer.locator('.flying-bat').count(), standardMotion ? 6 : 0, 'Repeated activation must not accumulate bats');
-  }
-  const after = await page.locator('.hero').boundingBox();
-  testStage = `${viewport.label}: bat layout preservation`;
-  assert.ok(Math.abs(before.height - after.height) <= 1, 'Bat interaction must not add layout height');
-  assert.equal(await page.evaluate(() => document.documentElement.scrollHeight), beforeHeight);
-  testStage = `${viewport.label}: bat cleanup`;
-  await page.waitForFunction(() => document.querySelectorAll('#batFlightLayer .flying-bat').length === 0, null, { timeout: 2500 });
-  await page.waitForFunction(() => document.getElementById('batCaption').textContent === 'Wake the bats', null, { timeout: 3500 });
-  // Decorative layers must not obstruct real party controls or header links.
-  testStage = `${viewport.label}: links after bats`;
-  await checkHitTarget(page.locator('.calendar-link'), `${viewport.label}: calendar after bats`);
-  await checkHitTarget(page.locator('.masthead .instagram-link'), `${viewport.label}: Instagram after bats`);
-}
 
 try {
   await waitForServer();
@@ -192,7 +143,6 @@ try {
       assert.equal(await page.locator(`${navigation} a[aria-current="page"]`).getAttribute('href'), target);
     }
     await page.goto(origin, { waitUntil: 'networkidle' });
-    await verifyBats(page, viewport);
     testStage = `${viewport.label}: Instagram and calendars`;
     const instagram = page.locator('a[href^="https://www.instagram.com/"]');
     assert.equal(await instagram.count(), 2, 'Header and footer Instagram links must exist');
@@ -262,22 +212,6 @@ try {
         'Instagram links and logos', 'Google Calendar popup', 'ICS download', 'no overflow or hidden footer'] }));
     await context.close();
   }
-  const motionContext = await browser.newContext({
-    viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true,
-    reducedMotion: 'no-preference'
-  });
-  const motionPage = await motionContext.newPage();
-  await motionPage.goto(origin, { waitUntil: 'networkidle' });
-  await verifyBats(motionPage, { label: 'phone-standard-motion', mobile: true }, true);
-  const tabs = await motionPage.locator('.mobile-nav').boundingBox();
-  await motionPage.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  const firstScreenWarning = await motionPage.locator('.rock-warning').boundingBox();
-  testStage = 'phone-standard-motion: first-screen rock rule';
-  assert.ok(firstScreenWarning.y + firstScreenWarning.height <= tabs.y + 1, 'Animated bats must preserve the first-screen entry rule');
-  console.log(JSON.stringify({ verified: true, viewport: 'phone-standard-motion',
-    checks: ['touch, Enter, and Space', 'six bounded flights', 'repeat activation cap', 'animation cleanup',
-      'status and caption feedback', 'no layout shift', 'unblocked links', 'first-screen rock rule'] }));
-  await motionContext.close();
 } catch (error) {
   const message = String(error?.message || 'Browser check failed')
     .replace(/https?:\/\/\S+/g, '[URL]').replace(/[^\x20-\x7e]/g, ' ').replace(/\s+/g, ' ');

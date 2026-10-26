@@ -35,7 +35,7 @@ async function waitForPublishedCalendar() {
       if (response.ok && (await response.text()).includes('DTSTART:20261101T000000Z')) {
         const homepage = await fetch(origin, { cache: 'no-store', signal: AbortSignal.timeout(5000) });
         const text = await homepage.text();
-        if (homepage.ok && text.includes('mobile-nav') && text.includes('id="batTrigger"') && !text.includes('id="gameCanvas"')) {
+        if (homepage.ok && text.includes('mobile-nav') && !text.includes('id="batTrigger"') && !text.includes('bat-flight.svg') && !text.includes('id="gameCanvas"')) {
           const arcade = await fetch(origin + '/arcade', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
           const roll = await fetch(origin + '/roll-call', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
           if (arcade.ok && roll.ok && (await arcade.text()).includes('id="gameCanvas"') && (await roll.text()).includes('id="costumeForm"')) return;
@@ -211,8 +211,8 @@ async function publicReadOnly() {
       const response = await page.goto(origin + path, { waitUntil: 'networkidle' });
       assert.equal(response.status(), 200, `Public ${path} must be accessible without login`);
       if (path === '/') {
-        assert.equal(await page.locator('#batTrigger').count(), 1, 'Published party page must include the interactive bats');
-        assert.equal(await page.locator('#batTrigger').getAttribute('aria-label'), 'Wake the bats');
+        assert.equal(await page.locator('#batTrigger,#batFlightLayer,img[src="/assets/bat-flight.svg"]').count(), 0, 'Published page must not contain interactive bats');
+        assert.equal(await page.locator('img[src="/assets/bat.svg"]').count(), 1, 'Static header branding remains');
         assert.equal(await page.locator('form,canvas,#rollList,#leaderboardBody').count(), 0, 'Home must remain a concise party page');
         assert.equal(await page.evaluate(() => performance.getEntriesByType('resource').filter(entry => new URL(entry.name).pathname.startsWith('/api/')).length), 0, 'Home must not fetch the shared backend');
         if (viewport.width < 600) assert.ok(await page.evaluate(() => document.documentElement.scrollHeight) <= viewport.height * 3.5, 'Phone homepage must stay compact');
@@ -259,6 +259,8 @@ async function publicReadOnly() {
     const state = await health.json();
     assert.equal(state.configured, true);
     assert.equal(state.mode, 'shared');
+    const deletedFlight = await page.request.head(`${origin}/assets/bat-flight.svg`);
+    assert.equal(deletedFlight.status(), 404, 'Removed flight artwork must not remain deployed');
     const calendar = await page.request.get(`${origin}/rocktober.ics`);
     assert.equal(calendar.status(), 200);
     assert.ok((await calendar.text()).includes('DTSTART:20261101T000000Z'));
