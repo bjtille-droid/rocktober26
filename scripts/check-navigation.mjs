@@ -180,7 +180,7 @@ try {
     assert.equal(calendarUrl.searchParams.get('ctz'), 'America/New_York');
     assert.ok(calendarUrl.searchParams.get('location').includes('Sloan Street Apartments'));
     assert.ok(calendarUrl.searchParams.get('location').includes('Clemson'));
-    assert.ok(calendarUrl.searchParams.get('details').includes('Swell'));
+    assert.ok(calendarUrl.searchParams.get('details').includes('A rock band'));
     assert.ok(calendarUrl.searchParams.get('details').includes('DJ Campbell'));
     assert.equal(await calendar.getAttribute('download'), null);
     await checkHitTarget(calendar, `${viewport.label}: Google Calendar`);

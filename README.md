@@ -2,7 +2,7 @@
 
 A Sloan Street Afterlife Production: Halloween, October 31, 2026 at 8 PM Eastern.
 
-The site keeps its printed campus-flyer look, haunted illustrations, live countdown, Swell / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade. Guests can open a prefilled Google Calendar event or download the event for other calendar apps. Both use the same 8 PM Eastern start. The Google link is a start-time reminder with no assumed party end time; guests choose Save in Google Calendar.
+The site keeps its printed campus-flyer look, haunted illustrations, live countdown, A rock band / Karaoke + Spooky Games / DJ Campbell lineup, costume roll call, and Rock Run arcade. Guests can open a prefilled Google Calendar event or download the event for other calendar apps. Both use the same 8 PM Eastern start. The Google link is a start-time reminder with no assumed party end time; guests choose Save in Google Calendar.
 
 ## Pages
 
